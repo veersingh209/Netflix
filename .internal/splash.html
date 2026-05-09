@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Launching Netflix Explorer...</title>
+    <style>
+        :root {
+            --netflix-red: #E50914;
+            --netflix-black: #141414;
+            --glass: rgba(255, 255, 255, 0.1);
+            --splash-primary: #3b82f6;
+            --splash-glow: rgba(59, 130, 246, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--netflix-black);
+            color: white;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.15) 0%, rgba(20, 20, 20, 0.95) 70%);
+            z-index: -1;
+        }
+
+        /* Animated background particles */
+        body::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            right: -50%;
+            bottom: -50%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            z-index: -2;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(2%, 2%) rotate(1deg); }
+            66% { transform: translate(-1%, 1%) rotate(-1deg); }
+        }
+
+        .global-loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-content {
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            padding: 2rem;
+        }
+
+        .splash-brand {
+            margin-bottom: 3rem;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .netflix-n-logo {
+            color: var(--netflix-red);
+            font-size: 5rem;
+            font-weight: bold;
+            letter-spacing: -2px;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            text-shadow: 0 0 30px rgba(229, 9, 20, 0.4);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.9; transform: scale(1.02); }
+        }
+
+        .splash-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .explorer-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 300;
+        }
+
+        .splash-status-container {
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--splash-primary), #8b5cf6);
+            border-radius: 2px;
+            animation: progressAnimation 2s ease-in-out infinite;
+            box-shadow: 0 0 10px var(--splash-glow);
+        }
+
+        @keyframes progressAnimation {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+
+        .loading-text-wrapper {
+            margin-bottom: 1rem;
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            min-height: 1.5rem;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-subtext {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-family: monospace;
+        }
+
+        .loading-error-msg {
+            color: #ff6b6b;
+        }
+
+        .status {
+            margin-top: 2rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--splash-primary);
+        }
+
+        .auth-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 1rem;
+        }
+
+        .auth-badge::before {
+            content: '🔐';
+        }
+
+        .splash-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            text-align: left;
+            max-width: 400px;
+            margin-top: 1rem;
+            animation: fadeIn 1.2s ease-out;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .info-card h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--splash-primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+            padding: 0.5rem 0;
+        }
+
+        .info-card-header-text {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chevron {
+            font-size: 0.7rem;
+            transition: transform 0.3s ease;
+            opacity: 0.5;
+        }
+
+        .info-card.expanded .chevron {
+            transform: rotate(180deg);
+            opacity: 1;
+        }
+
+        .info-card-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .info-card.expanded .info-card-content {
+            max-height: 500px;
+            margin-top: 1rem;
+            opacity: 1;
+        }
+
+        .info-card p {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1rem;
+        }
+
+        .troubleshoot-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .troubleshoot-list li {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .troubleshoot-list li::before {
+            content: '•';
+            color: var(--splash-primary);
+        }
+
+        .stop-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .stop-btn:hover {
+            background: rgba(229, 9, 20, 0.1);
+            border-color: rgba(229, 9, 20, 0.3);
+            color: #ff4d4d;
+        }
+
+        .fade-out {
+            animation: fadeOut 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; visibility: hidden; }
+        }
+    </style>
+</head>
+<body>
+    <div class="global-loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="splash-brand">
+                <div class="netflix-n-logo">N</div>
+                <div class="splash-title">
+                    NETFLIX <span class="explorer-text">Explorer</span>
+                </div>
+            </div>
+
+            <div class="splash-status-container">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill"></div>
+                </div>
+                
+                <div class="loading-text-wrapper">
+                    <div class="loading-text" id="loadingText">Waiting for Authentication...</div>
+                    <div class="loading-subtext" id="loadingSubtext">A Google sign-in window should have opened.</div>
+                </div>
+            </div>
+
+            <div class="info-card" id="infoCard">
+                <h3 onclick="toggleInfo()">
+                    <span class="info-card-header-text"><span>ℹ️</span> What's Happening?</span>
+                    <span class="chevron">▼</span>
+                </h3>
+                <div class="info-card-content">
+                    <p>
+                        Netflix Explorer uses Google Authentication to securely access your movie metadata from Google Drive. We're currently waiting for you to complete the sign-in process in the external window.
+                    </p>
+                    <ul class="troubleshoot-list">
+                        <li>Check for a blocked popup in your browser's address bar.</li>
+                        <li>Look for a 'Sign in with Google' tab in your browser.</li>
+                        <li>The application will automatically proceed once you've signed in.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="splash-actions">
+                <div class="auth-badge">Secure Google OAuth Flow</div>
+                
+                <button class="stop-btn" id="stopBtn" onclick="stopApplication()">
+                    <span class="stop-icon">⏻</span>
+                    <span>Cancel & Exit</span>
+                </button>
+            </div>
+
+            <div id="status" class="status">Waiting for user authorization...</div>
+        </div>
+    </div>
+
+    <script>
+        function toggleInfo() {
+            const card = document.getElementById('infoCard');
+            card.classList.toggle('expanded');
+        }
+
+        const POLL_INTERVAL = 1000;
+        const TARGET_URL = 'http://localhost:7173';
+        const STATUS_URL = 'http://localhost:9000/status.json';
+        const statusEl = document.getElementById('status');
+        const loadingTextEl = document.getElementById('loadingText');
+        const loadingSubtextEl = document.getElementById('loadingSubtext');
+        const loadingOverlayEl = document.getElementById('loadingOverlay');
+
+        const loadingTexts = [
+            "Waiting for Google Auth...",
+            "Pending user permission...",
+            "Checking authentication status...",
+            "Awaiting secure token...",
+            "Almost there, please sign in..."
+        ];
+
+        let textIndex = 0;
+        let textInterval;
+
+        function rotateLoadingText() {
+            loadingTextEl.style.opacity = '0';
+            setTimeout(() => {
+                loadingTextEl.textContent = loadingTexts[textIndex];
+                loadingTextEl.style.opacity = '1';
+                textIndex = (textIndex + 1) % loadingTexts.length;
+            }, 300);
+        }
+
+        function startTextRotation() {
+            rotateLoadingText();
+            textInterval = setInterval(rotateLoadingText, 3500);
+        }
+
+        async function pollStatus() {
+            try {
+                const response = await fetch(STATUS_URL + '?t=' + Date.now());
+                const data = await response.json();
+                if (data.status) {
+                    // statusEl.innerText = data.status; // Keep our manual status if needed, or update subtext
+                    loadingSubtextEl.innerText = data.status;
+                }
+            } catch (e) {}
+            setTimeout(pollStatus, 1000);
+        }
+
+        async function checkReady() {
+            try {
+                // Check backend auth is complete via ingestion status
+                const statusRes = await fetch('http://localhost:8002/api/ingestion/status');
+                if (!statusRes.ok) throw new Error('Backend not ready');
+                
+                const statusData = await statusRes.json();
+                // Wait until we have user info (auth complete)
+                if (!statusData.user) {
+                    throw new Error('Auth not complete');
+                }
+                
+                clearInterval(textInterval);
+                statusEl.innerText = "Authentication successful!";
+                statusEl.style.color = "#4ade80";
+                loadingTextEl.textContent = "Access Granted";
+                loadingSubtextEl.textContent = "Redirecting to your dashboard...";
+                
+                // Fade out and redirect
+                loadingOverlayEl.classList.add('fade-out');
+                setTimeout(() => {
+                    window.location.href = TARGET_URL;
+                }, 1000);
+            } catch (e) {
+                // Keep polling
+                setTimeout(checkReady, POLL_INTERVAL);
+            }
+        }
+
+        async function stopApplication() {
+            if (!confirm('Cancel authentication and stop services?')) return;
+            
+            const stopBtn = document.getElementById('stopBtn');
+            if (stopBtn) stopBtn.style.display = 'none';
+            
+            try {
+                await fetch('http://localhost:8002/api/system/shutdown', { 
+                    method: 'POST',
+                    mode: 'no-cors'
+                });
+            } catch (e) {}
+            
+            statusEl.innerText = "Stopping services...";
+            statusEl.style.color = "#ef4444";
+            loadingTextEl.textContent = "Shutting down...";
+            loadingSubtextEl.textContent = "Session terminated.";
+            
+            setTimeout(() => {
+                window.close();
+                document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:white;font-family:sans-serif;text-align:center;"><div><h1 style="color:#E50914">N</h1><p>Netflix Explorer stopped.<br>You may now close this window.</p></div></div>';
+            }, 1000);
+        }
+
+        // Start the experience
+        setTimeout(() => {
+            startTextRotation();
+        }, 500);
+
+        pollStatus();
+        setTimeout(checkReady, 1000);
+    </script>
+</body>
+</html>

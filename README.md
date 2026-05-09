@@ -1,4 +1,4 @@
-# 🎬 Netflix Movie Library Explorer
+# <img src="icon.png" width="40" style="vertical-align:middle"> Netflix Movie Library Explorer
 
 A high-performance, full-stack application architected for a **Staff Software Engineer 4** technical assessment. This explorer demonstrates advanced algorithmic design, resilient service integration, and a premium, responsive UI that honors the Netflix brand aesthetic.
 
@@ -9,10 +9,13 @@ A high-performance, full-stack application architected for a **Staff Software En
 This project is optimized for a seamless, one-click experience on macOS.
 
 ### Quick Start
-1.  **Download:** Grab the latest `Netflix Explorer.app.zip` from the [Releases](../../releases) section.
-2.  **Launch:** Unzip and double-click the **Netflix Explorer.app**.
-3.  **Initialize:** The system will start a branded splash screen while the high-performance engine hydrates the in-memory data store.
-4.  **Explore:** Your library will automatically open in your default browser once the services are healthy.
+1.  **Download:** Grab the latest `Netflix_Explorer_v1.zip` from the [Releases](../../releases) section.
+2.  **Unzip:** Extract the entire folder to your Desktop or Applications folder.
+3.  **Authorize:** Open Terminal in the unzipped folder and run:
+    ```bash
+    xattr -cr "Netflix Explorer.app"
+    ```
+4.  **Launch:** Double-click the **Netflix Explorer.app** to start the engine.
 
 ### Operational Controls
 *   **Shutdown:** Click the ⏻ (Power) button in the application header or use the hidden `.Stop Netflix Explorer.command` utility.
@@ -103,3 +106,16 @@ A comprehensive Postman collection is included for rapid API exploration:
 3.  **Circuit-Breaker Pattern:** Implemented to ensure the core application remains 100% functional even during global AI provider outages.
 
 ---
+## 🛠️ Troubleshooting
+
+### "App is damaged" Error on macOS
+If you see a message saying the app is damaged, it is macOS Gatekeeper blocking an unsigned binary. To fix this:
+1. Open **Terminal**.
+2. Run: `xattr -cr "Netflix Explorer.app"`
+3. Launch the app again.
+
+### Startup Delays
+The first launch may take 1-2 minutes as the system automatically hydrates the Python and Node.js environments. Follow the progress in the branded splash screen.
+
+---
+*Architected for the SE4 Technical Assessment.*

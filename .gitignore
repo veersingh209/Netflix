@@ -1,0 +1,77 @@
+# macOS System Files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# Environment & Virtual Environments
+.env
+.env.local
+.env.*.local
+venv/
+.venv/
+env/
+ENV/
+bin/
+lib/
+share/
+include/
+
+# Python Artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Node.js / Frontend
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+dist/
+build/
+.next/
+.cache/
+.parcel-cache/
+
+# Project-Specific Logs & State
+*.log
+.app_launch.log
+.launch_debug.log
+launch_debug.log
+status.json
+.internal/status.json
+.internal/launch_debug.log
+.internal/app_launch.log
+
+# Credentials & Sensitive Data
+**/credentials/*.json
+**/credentials/*.token
+**/credentials/*.pickle
+.credentials/
+secrets/
+*.pem
+*.key
+
+# App Bundles (Generated)
+Netflix Explorer.app/

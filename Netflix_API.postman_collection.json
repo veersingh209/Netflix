@@ -1,0 +1,390 @@
+{
+	"info": {
+		"_postman_id": "c1f8d8b9-e123-4567-89ab-cdef01234567",
+		"name": "Netflix Movie Library Explorer API",
+		"description": "Comprehensive API collection for the Netflix Movie Library Explorer system. Includes endpoints for movie search, filtering, statistics, AI magic search, and system configuration.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health & System",
+			"item": [
+				{
+					"name": "Root Identity",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								""
+							]
+						},
+						"description": "Identify the service and its version."
+					},
+					"response": []
+				},
+				{
+					"name": "System Health & Diagnostics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health?ai_provider=openai",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"health"
+							],
+							"query": [
+								{
+									"key": "ai_provider",
+									"value": "openai",
+									"description": "Optional: Check status for a specific AI provider"
+								}
+							]
+						},
+						"description": "Get detailed system diagnostics, memory usage, ingestion stats, and AI gateway status."
+					},
+					"response": []
+				},
+				{
+					"name": "System Shutdown",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/system/shutdown",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"system",
+								"shutdown"
+							]
+						},
+						"description": "Gracefully shut down both the backend and frontend services."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Movies",
+			"item": [
+				{
+					"name": "Autocomplete Search (Trie)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/movies/search?q=Inc&max_results=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"movies",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "Inc",
+									"description": "Prefix query for movie titles"
+								},
+								{
+									"key": "max_results",
+									"value": "20"
+								}
+							]
+						},
+						"description": "High-performance prefix search utilizing a Trie data structure."
+					},
+					"response": []
+				},
+				{
+					"name": "Advanced Filtering (Inverted Index)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/movies/filter?genres=Action&min_rating=7.5&year=2020&max_results=100",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"movies",
+								"filter"
+							],
+							"query": [
+								{
+									"key": "genres",
+									"value": "Action"
+								},
+								{
+									"key": "min_rating",
+									"value": "7.5"
+								},
+								{
+									"key": "year",
+									"value": "2020"
+								},
+								{
+									"key": "max_results",
+									"value": "100"
+								}
+							]
+						},
+						"description": "Multi-criteria filtering using an Inverted Index for O(1) term lookups."
+					},
+					"response": []
+				},
+				{
+					"name": "Add Movie",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Postman Integration Test\",\n  \"genre\": [\"Tech\", \"Action\"],\n  \"rating\": 9.5,\n  \"year\": 2024\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/movies/add",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"movies",
+								"add"
+							]
+						},
+						"description": "Add a new movie record to the in-memory repository."
+					},
+					"response": []
+				},
+				{
+					"name": "Enrich Movie (AI)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/movies/:movie_id/enrich",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"movies",
+								":movie_id",
+								"enrich"
+							],
+							"variable": [
+								{
+									"key": "movie_id",
+									"value": "example-uuid"
+								}
+							]
+						},
+						"description": "Fetch enriched metadata (poster, tagline, director) for a specific movie using AI providers."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Statistics",
+			"item": [
+				{
+					"name": "Global Library Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/stats",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"stats"
+							]
+						},
+						"description": "Fetch aggregated library statistics including top genres and year distribution."
+					},
+					"response": []
+				},
+				{
+					"name": "Available Genres",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/stats/genres",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"stats",
+								"genres"
+							]
+						},
+						"description": "Get a list of all unique genres present in the library."
+					},
+					"response": []
+				},
+				{
+					"name": "Filtered Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/stats/filter?genres=Sci-Fi",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"stats",
+								"filter"
+							],
+							"query": [
+								{
+									"key": "genres",
+									"value": "Sci-Fi"
+								}
+							]
+						},
+						"description": "Compute statistics scoped to a specific filter criteria."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "AI & Magic Search",
+			"item": [
+				{
+					"name": "Magic Search (NL)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/magic-search?q=I want to watch high rated comedies from the 90s",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"magic-search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "I want to watch high rated comedies from the 90s"
+								}
+							]
+						},
+						"description": "Natural language movie search powered by AI providers (OpenAI, Anthropic, Gemini, etc.)."
+					},
+					"response": []
+				},
+				{
+					"name": "Update AI Provider Key",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/config/api-key?provider=openai&api_key=sk-your-key-here",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"config",
+								"api-key"
+							],
+							"query": [
+								{
+									"key": "provider",
+									"value": "openai"
+								},
+								{
+									"key": "api_key",
+									"value": "sk-your-key-here"
+								}
+							]
+						},
+						"description": "Securely update the API key for a specific AI provider and validate the connection."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ingestion",
+			"item": [
+				{
+					"name": "Ingestion Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/ingestion/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"ingestion",
+								"status"
+							]
+						},
+						"description": "Monitor the real-time status of the Google Drive ingestion pipeline and logs."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8002",
+			"type": "string"
+		}
+	]
+}

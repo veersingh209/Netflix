@@ -9,9 +9,10 @@ A high-performance, full-stack application architected for a **Staff Software En
 This project is optimized for a seamless, one-click experience on macOS.
 
 ### Quick Start
-1.  **Launch:** Double-click the **Netflix Explorer.app** in the root directory.
-2.  **Initialize:** The system will start a branded splash screen while the high-performance engine hydrates the in-memory data store.
-3.  **Explore:** Your library will automatically open in your default browser once the services are healthy.
+1.  **Download:** Grab the latest `Netflix Explorer.app.zip` from the [Releases](../../releases) section.
+2.  **Launch:** Unzip and double-click the **Netflix Explorer.app**.
+3.  **Initialize:** The system will start a branded splash screen while the high-performance engine hydrates the in-memory data store.
+4.  **Explore:** Your library will automatically open in your default browser once the services are healthy.
 
 ### Operational Controls
 *   **Shutdown:** Click the ⏻ (Power) button in the application header or use the hidden `.Stop Netflix Explorer.command` utility.
@@ -43,7 +44,7 @@ This project is optimized for a seamless, one-click experience on macOS.
 
 ```text
 Netflix/
-├── Netflix Explorer.app/    # macOS Application Bundle
+├── [Downloadable] .app/   # macOS Bundle (Available in Releases)
 ├── README.md                # Unified Technical Documentation
 ├── Netflix_API.postman_collection.json # API Testing Suite
 ├── .internal/               # Application Source (Hidden)
